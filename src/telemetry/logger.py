@@ -16,12 +16,14 @@ class IndustryLogger:
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
 
-        # File Handler (JSON)
+        # File Handler (JSON) — ghi đầy đủ telemetry
         log_file = os.path.join(log_dir, f"{datetime.now().strftime('%Y-%m-%d')}.log")
-        file_handler = logging.FileHandler(log_file)
+        file_handler = logging.FileHandler(log_file, encoding="utf-8")
+        file_handler.setLevel(logging.INFO)
         
-        # Console Handler
+        # Console Handler — chỉ hiện WARNING+ (agent sẽ tự print trace đẹp)
         console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.WARNING)
         
         self.logger.addHandler(file_handler)
         self.logger.addHandler(console_handler)
@@ -33,7 +35,7 @@ class IndustryLogger:
             "event": event_type,
             "data": data
         }
-        self.logger.info(json.dumps(payload))
+        self.logger.info(json.dumps(payload, ensure_ascii=False))
 
     def info(self, msg: str):
         self.logger.info(msg)
